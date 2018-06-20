@@ -1,2 +1,1 @@
-# tsgsz.github.io
-myblog
+# 少主的博客
