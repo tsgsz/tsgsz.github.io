@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="工作需要，组里设计了一个叫 RQuery 的分布式 R 环境。 我们都知道 R 是一门强大的数据处理语言（或者叫做数据处理工具更合适），R 有一些很强大的特性，比如 R 中可以很方便的插入 sql，执行 sql 查询之后得到 data.frame，然后利用 R 本身强大的库函数去做各种各样的运算。 然而强大的 R 有一个限制，那就是它事实上是单机的程序，当你有一堆巨大无比的数据集，比如好几百T甚至">
+<meta property="og:type" content="article">
+<meta property="og:title" content=" RQuery-分布式 R">
+<meta property="og:url" content="http://tsgsz.github.io/2014/08/27/2014-08-27-rquery-a-distributed-r-environment-markdown/index.html">
+<meta property="og:site_name" content="云烟记事录">
+<meta property="og:description" content="工作需要，组里设计了一个叫 RQuery 的分布式 R 环境。 我们都知道 R 是一门强大的数据处理语言（或者叫做数据处理工具更合适），R 有一些很强大的特性，比如 R 中可以很方便的插入 sql，执行 sql 查询之后得到 data.frame，然后利用 R 本身强大的库函数去做各种各样的运算。 然而强大的 R 有一个限制，那就是它事实上是单机的程序，当你有一堆巨大无比的数据集，比如好几百T甚至">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-06-20T04:23:27.373Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content=" RQuery-分布式 R">
+<meta name="twitter:description" content="工作需要，组里设计了一个叫 RQuery 的分布式 R 环境。 我们都知道 R 是一门强大的数据处理语言（或者叫做数据处理工具更合适），R 有一些很强大的特性，比如 R 中可以很方便的插入 sql，执行 sql 查询之后得到 data.frame，然后利用 R 本身强大的库函数去做各种各样的运算。 然而强大的 R 有一个限制，那就是它事实上是单机的程序，当你有一堆巨大无比的数据集，比如好几百T甚至">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tsgsz.github.io/2014/08/27/2014-08-27-rquery-a-distributed-r-environment-markdown/"/>
+
+
+
+
+
+  <title> RQuery-分布式 R | 云烟记事录</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">云烟记事录</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">少主小册</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tsgsz.github.io/2014/08/27/2014-08-27-rquery-a-distributed-r-environment-markdown/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="听松馆少主">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云烟记事录">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline"> RQuery-分布式 R</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2014-08-27T12:00:31+08:00">
+                2014-08-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/抛砖引玉/" itemprop="url" rel="index">
+                    <span itemprop="name">抛砖引玉</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>工作需要，组里设计了一个叫 RQuery 的分布式 R 环境。</p>
+<p>我们都知道 R 是一门强大的数据处理语言（或者叫做数据处理工具更合适），<br>R 有一些很强大的特性，比如 R 中可以很方便的插入 sql，<br>执行 sql 查询之后得到 data.frame，<br>然后利用 R 本身强大的库函数去做各种各样的运算。</p>
+<p>然而强大的 R 有一个限制，那就是它事实上是单机的程序，<br>当你有一堆巨大无比的数据集，比如好几百T甚至上P的时候，<br>单机的 R 就无法用来做数据分析了，<br>业界事实上有很多分布式的系统来做数据分析比如 Storm，Pig。<br>然而对于一个传统的数据分析人员来说，<br>在思考数据本身的同时还要去理解分布式的算法是一件很麻烦的事，<br>而且这些系统也没有直接支持 R，matlab 这样高级的适合于数据分析人员使用的工具。<br>在这样的背景下，RQuery 产生了。</p>
+<p>RQuery 在设计上尽可能的屏蔽了分布式相关的东西，使得 api 和 R 原生的 api 相近。<br>举个例子：</p>
+<figure class="highlight r"><figcaption><span>read_table.R</span><a href="/downloads/code/rquery-a-distributed-r-environment/read_table.R">view raw</a></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">data &lt;- read.table(<span class="string">"Sample.txt"</span>)</span><br><span class="line"></span><br><span class="line">new_data &lt;- lapply(data, <span class="keyword">function</span>(x) x + <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">summary(new_data)</span><br></pre></td></tr></table></figure>
+<p>上面的代码是在 R 中去 read 一个本地的 text 文件，并且进行了一系列操作，</p>
+<figure class="highlight r"><figcaption><span>read_dtable.R</span><a href="/downloads/code/rquery-a-distributed-r-environment/read_dtable.R">view raw</a></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">data &lt;- dtable(<span class="string">"Sample"</span>)</span><br><span class="line"></span><br><span class="line">new_data &lt;- lapply(data, <span class="keyword">function</span>(x) x + <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">new_data_local &lt;- take(new_data, <span class="number">1000</span>)</span><br><span class="line"></span><br><span class="line">summary(new_data_local)</span><br></pre></td></tr></table></figure>
+<p>这里面，Sample 是事先在 meta 中建好一张表，<br>对应的是存在分布式文件系统上的一堆文件。</p>
+<p>可以看到上下的 R 代码写起来差距很小。这样就给传统的数据分析人员极大的便利。<br>再举一个 kmeans 的例子：</p>
+<figure class="highlight r"><figcaption><span>kmeans_r.R</span><a href="/downloads/code/rquery-a-distributed-r-environment/kmeans_r.R">view raw</a></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">data &lt;- read.table(<span class="string">"Sample.txt"</span>)</span><br><span class="line"></span><br><span class="line">new_data &lt;- lapply(data, <span class="keyword">function</span>(x) x + <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">kc &lt;- kmeans(new_data, <span class="number">3L</span>)</span><br><span class="line"></span><br><span class="line">kc$cluster</span><br><span class="line"></span><br><span class="line">kc$centers</span><br></pre></td></tr></table></figure>
+<figure class="highlight r"><figcaption><span>kmeans_dr.R</span><a href="/downloads/code/rquery-a-distributed-r-environment/kmeans_dr.R">view raw</a></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">data &lt;- load.table(<span class="string">"Sample"</span>)</span><br><span class="line"></span><br><span class="line">new_data &lt;- lapply(data, <span class="keyword">function</span>(x) x + <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">kc &lt;- rquery.kmeans(new_data, <span class="number">3L</span>)</span><br><span class="line"></span><br><span class="line">collect(kc$cluster)</span><br><span class="line"></span><br><span class="line">kc$centers</span><br></pre></td></tr></table></figure>
+<p>可以看到用法基本一致。</p>
+<p>RQuery 抽象出了一个数据结构叫做 dtable，并且提供了如下 API：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">select(dt, expr)  # 类似于 sql 中的 select</span><br><span class="line">where(dt, expr)  # 类似于 sql  中的 where</span><br><span class="line">count(dt)  # dt 中的行数 </span><br><span class="line">take(dt, 10)  # 取 dt 中的前10行</span><br><span class="line">collect(dt)  # 将 dt 中的数据拿到本地</span><br><span class="line">takeSample(dt)  # 从 dt 中采样并拿到本地</span><br></pre></td></tr></table></figure>
+<p>然后我们目前提供了四个 api，供用户在 dtable 上做分布式的算法操作，<br>之后会给出更多地算法 api：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">dtable(name)  # 创建一个 dtable</span><br><span class="line">rquery(sql)  # 执行一条 sql 语句</span><br><span class="line">rquery.collect(sql)  # 执行一条 sql 语句</span><br><span class="line">rquery.kmeans(dt, k)  #  执行 kmeans 算法</span><br></pre></td></tr></table></figure>
+<p>当然，目前来说 RQuery 还很不成熟，缺失了诸多的 api，<br>虽然可以方便的在分布式和本地切换，但是 dtable 还有很多操作不能直接进行，<br>需要一步转换，后续会支持更多地 R 本地的 api，提供机器学习十大经典算法，<br>让在分布式上执行 R 运算和在本地一样便捷！</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2014/08/24/2014-08-24-thinking-in-design-of-flip-gravity/" rel="next" title="雪球快跑--设计与思考">
+                <i class="fa fa-chevron-left"></i> 雪球快跑--设计与思考
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">听松馆少主</p>
+              <p class="site-description motion-element" itemprop="description">这是一本小册子，从今天开始记录我小小的人生。</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">听松馆少主</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
