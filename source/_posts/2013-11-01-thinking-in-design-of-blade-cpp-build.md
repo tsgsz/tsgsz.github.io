@@ -1,7 +1,8 @@
 ---
 title: "浅谈blade中C++Build的设计与实现"
 date: 2013-11-01 12:20 +0800
-categories: 学海无涯
+categories: 抛砖引玉
+tags: C++
 ---
 
 [blade] [blade]的背景我也就不详细介绍了，总体来说，

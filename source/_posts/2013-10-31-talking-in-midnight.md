@@ -2,6 +2,7 @@
 title: 2013-10-31-talking-in-midnight
 date: 2013-10-31 01:34 +0800
 categories: 浮生若梦
+tags: 云烟记事录
 ---
 
 已经很晚了，之前一直没有下定决心来写一个blog，一来我有点洁癖，

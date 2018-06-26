@@ -2,6 +2,7 @@
 title: " RQuery-分布式 R"
 date: 2014-08-27 12:00:31 +0800
 categories:  抛砖引玉
+tags: 分布式
 ---
 
 工作需要，组里设计了一个叫 RQuery 的分布式 R 环境。
