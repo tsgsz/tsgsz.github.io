@@ -1,5 +1,5 @@
 ---
-title: 2013-10-31-talking-in-midnight
+title: 深夜静思
 date: 2013-10-31 01:34 +0800
 categories: 浮生若梦
 tags: 云烟记事录
