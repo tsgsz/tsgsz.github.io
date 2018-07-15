@@ -232,6 +232,156 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tsgsz.github.io/2018/07/15/thinking-in-new-code-design-of-mural/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="听松馆少主">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云烟记事录">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/07/15/thinking-in-new-code-design-of-mural/" itemprop="url">画中人代码结构思路</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-15T19:55:24+08:00">
+                2018-07-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/抛砖引玉/" itemprop="url" rel="index">
+                    <span itemprop="name">抛砖引玉</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>最近对画中人的玩法设计基本上有了总体思路, 细节还在完善, 主要工作量目前是三个:</p>
+<pre><code>* 数值的完善
+* 数值填充工具的完善
+* 部分新系统的添加(随机事件)
+</code></pre><p>由于对于游戏玩法本身我并不想完全抄一个已有的游戏,<br>所以在可预见的未来画中人的规则会有需要更改的地方, 在现有的代码框架中,<br>修改的代价不小, 因为我们的规则逻辑分散在各个模块中, 每次修改都可能引入新的bug.<br>因此我决定重构.</p>
+<p>根据现在的需求, 我需要有一个可以很方便操作各种内部数据的工具,<br>方便我来调整游戏性,同时我需要系统的规则是可插拔的, 最好规则的插拔的地方很统一.</p>
+<p>所以新的系统架构应该从 oo 转换为数据流.</p>
+<p>采用 proto 作为中间数据定义, 系统被分为 ui, data, logic 三层,<br>其中 ui 负责在每一帧读取 data 并展示(当然有脏数据的设计),<br>同时 ui 会发出 event, logic 层接收到 event, 遍历现有规则, 修改 data.<br>data 层由 proto 定义.</p>
+<p>数值工具则是 proto 中 message 的可视化定义<br>存档工具则是 proto 的 二进制序列化和加密</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://tsgsz.github.io/2018/06/24/ethereum-not-only-the-data/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1878,7 +2028,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-count">10</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
