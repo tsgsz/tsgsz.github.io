@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tsgsz.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"সার্চ করা হচ্ছে...","empty":"আমরা উক্ত অনুসন্ধানের জন্য কোন ফলাফল খুঁজে পাইনি: ${query}","hits_time":"${hits} টি ফলাফল ${time} মিলিসেকেন্ড এ পাওয়া গেছে","hits":"${hits} টি ফলাফল পাওয়া গেছে"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="工作需要，组里设计了一个叫 RQuery 的分布式 R 环境。 我们都知道 R 是一门强大的数据处理语言（或者叫做数据处理工具更合适），R 有一些很强大的特性，比如 R 中可以很方便的插入 sql，执行 sql 查询之后得到 data.frame，然后利用 R 本身强大的库函数去做各种各样的运算。 然而强大的 R 有一个限制，那就是它事实上是单机的程序，当你有一堆巨大无比的数据集，比如好几百T甚至">
+<meta property="og:type" content="article">
+<meta property="og:title" content=" RQuery-分布式 R">
+<meta property="og:url" content="http://tsgsz.github.io/2014/08/27/2014-08-27-rquery-a-distributed-r-environment-markdown/index.html">
+<meta property="og:site_name" content="云烟记事录">
+<meta property="og:description" content="工作需要，组里设计了一个叫 RQuery 的分布式 R 环境。 我们都知道 R 是一门强大的数据处理语言（或者叫做数据处理工具更合适），R 有一些很强大的特性，比如 R 中可以很方便的插入 sql，执行 sql 查询之后得到 data.frame，然后利用 R 本身强大的库函数去做各种各样的运算。 然而强大的 R 有一个限制，那就是它事实上是单机的程序，当你有一堆巨大无比的数据集，比如好几百T甚至">
+<meta property="og:locale">
+<meta property="article:published_time" content="2014-08-27T04:00:31.000Z">
+<meta property="article:modified_time" content="2026-02-10T01:50:19.807Z">
+<meta property="article:author" content="听松馆少主">
+<meta property="article:tag" content="分布式">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://tsgsz.github.io/2014/08/27/2014-08-27-rquery-a-distributed-r-environment-markdown/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-Hans","comments":true,"permalink":"http://tsgsz.github.io/2014/08/27/2014-08-27-rquery-a-distributed-r-environment-markdown/","path":"/2014/08/27/2014-08-27-rquery-a-distributed-r-environment-markdown/","title":" RQuery-分布式 R"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> RQuery-分布式 R | 云烟记事录</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="নেভিগেশন বারের দৃশ্যমানতা টগল করুন" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">云烟记事录</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">少主小册</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="সার্চ" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>হোম পেজ</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>আর্কাইভ এর তালিকা</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-overview-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          সূচীপত্র
+        </li>
+        <li class="sidebar-nav-overview">
+          সারাংশ
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">听松馆少主</p>
+  <div class="site-description" itemprop="description">这是一本小册子，从今天开始记录我小小的人生。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">পোস্ট এর তালিকা</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">ক্যাটাগরি এর তালিকা</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">ট্যাগ এর তালিকা</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/tsgsz" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;tsgsz" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://tsgsz.github.io/2014/08/27/2014-08-27-rquery-a-distributed-r-environment-markdown/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="听松馆少主">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云烟记事录">
+      <meta itemprop="description" content="这是一本小册子，从今天开始记录我小小的人生。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" RQuery-分布式 R | 云烟记事录">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+           RQuery-分布式 R
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">প্রকাশিত হয়েছে</span>
+
+      <time title="তৈরি করা হয়েছেঃ 2014-08-27 12:00:31" itemprop="dateCreated datePublished" datetime="2014-08-27T12:00:31+08:00">2014-08-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">শ্রেনী</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%9B%E7%A0%96%E5%BC%95%E7%8E%89/" itemprop="url" rel="index"><span itemprop="name">抛砖引玉</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>工作需要，组里设计了一个叫 RQuery 的分布式 R 环境。</p>
+<p>我们都知道 R 是一门强大的数据处理语言（或者叫做数据处理工具更合适），<br>R 有一些很强大的特性，比如 R 中可以很方便的插入 sql，<br>执行 sql 查询之后得到 data.frame，<br>然后利用 R 本身强大的库函数去做各种各样的运算。</p>
+<p>然而强大的 R 有一个限制，那就是它事实上是单机的程序，<br>当你有一堆巨大无比的数据集，比如好几百T甚至上P的时候，<br>单机的 R 就无法用来做数据分析了，<br>业界事实上有很多分布式的系统来做数据分析比如 Storm，Pig。<br>然而对于一个传统的数据分析人员来说，<br>在思考数据本身的同时还要去理解分布式的算法是一件很麻烦的事，<br>而且这些系统也没有直接支持 R，matlab 这样高级的适合于数据分析人员使用的工具。<br>在这样的背景下，RQuery 产生了。</p>
+<p>RQuery 在设计上尽可能的屏蔽了分布式相关的东西，使得 api 和 R 原生的 api 相近。<br>举个例子：</p>
+
+
+<p>上面的代码是在 R 中去 read 一个本地的 text 文件，并且进行了一系列操作，</p>
+
+
+<p>这里面，Sample 是事先在 meta 中建好一张表，<br>对应的是存在分布式文件系统上的一堆文件。</p>
+<p>可以看到上下的 R 代码写起来差距很小。这样就给传统的数据分析人员极大的便利。<br>再举一个 kmeans 的例子：</p>
+
+
+
+
+<p>可以看到用法基本一致。</p>
+<p>RQuery 抽象出了一个数据结构叫做 dtable，并且提供了如下 API：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">select(dt, expr)  # 类似于 sql 中的 select</span><br><span class="line">where(dt, expr)  # 类似于 sql  中的 where</span><br><span class="line">count(dt)  # dt 中的行数 </span><br><span class="line">take(dt, 10)  # 取 dt 中的前10行</span><br><span class="line">collect(dt)  # 将 dt 中的数据拿到本地</span><br><span class="line">takeSample(dt)  # 从 dt 中采样并拿到本地</span><br></pre></td></tr></table></figure>
+
+<p>然后我们目前提供了四个 api，供用户在 dtable 上做分布式的算法操作，<br>之后会给出更多地算法 api：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">dtable(name)  # 创建一个 dtable</span><br><span class="line">rquery(sql)  # 执行一条 sql 语句</span><br><span class="line">rquery.collect(sql)  # 执行一条 sql 语句</span><br><span class="line">rquery.kmeans(dt, k)  #  执行 kmeans 算法</span><br></pre></td></tr></table></figure>
+
+<p>当然，目前来说 RQuery 还很不成熟，缺失了诸多的 api，<br>虽然可以方便的在分布式和本地切换，但是 dtable 还有很多操作不能直接进行，<br>需要一步转换，后续会支持更多地 R 本地的 api，提供机器学习十大经典算法，<br>让在分布式上执行 R 运算和在本地一样便捷！</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag"># 分布式</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2014/08/24/2014-08-24-thinking-in-design-of-flip-gravity/" rel="prev" title="雪球快跑--设计与思考">
+                  <i class="fa fa-angle-left"></i> 雪球快跑--设计与思考
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2014/09/04/2014-09-04-introduction/" rel="next" title=" 云烟记事录序">
+                   云烟记事录序 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class=""></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">true</span>
+  </div>
+  <div class="powered-by"><a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> এর সাহায্যে চলছে
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="উপরে ফিরে যান">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

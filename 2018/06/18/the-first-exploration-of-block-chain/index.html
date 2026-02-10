@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tsgsz.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"সার্চ করা হচ্ছে...","empty":"আমরা উক্ত অনুসন্ধানের জন্য কোন ফলাফল খুঁজে পাইনি: ${query}","hits_time":"${hits} টি ফলাফল ${time} মিলিসেকেন্ড এ পাওয়া গেছে","hits":"${hits} টি ফলাফল পাওয়া গেছে"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="大家好, 因为工作的原因, 最近在研究区块链,理解需要交流才能透彻, 于是计划写这么一个系列, 来和大家交流交流我对区块链的理解. 那么什么是区块链呢?按照维基百科上的定义, 是一系列使用密码学保护的持续增长的被链接起来的区块, 区块指的是一个信息列表. 这个定义读起来有点复杂, 我来翻译一下: 如果你有一页纸, 上面记录了一条条的数据(你写的诗啊, 你记的账啊), 这个就是区块链里面的区块. 你">
+<meta property="og:type" content="article">
+<meta property="og:title" content="区块链初探">
+<meta property="og:url" content="http://tsgsz.github.io/2018/06/18/the-first-exploration-of-block-chain/index.html">
+<meta property="og:site_name" content="云烟记事录">
+<meta property="og:description" content="大家好, 因为工作的原因, 最近在研究区块链,理解需要交流才能透彻, 于是计划写这么一个系列, 来和大家交流交流我对区块链的理解. 那么什么是区块链呢?按照维基百科上的定义, 是一系列使用密码学保护的持续增长的被链接起来的区块, 区块指的是一个信息列表. 这个定义读起来有点复杂, 我来翻译一下: 如果你有一页纸, 上面记录了一条条的数据(你写的诗啊, 你记的账啊), 这个就是区块链里面的区块. 你">
+<meta property="og:locale">
+<meta property="article:published_time" content="2018-06-17T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-02-10T01:50:19.808Z">
+<meta property="article:author" content="听松馆少主">
+<meta property="article:tag" content="区块链">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://tsgsz.github.io/2018/06/18/the-first-exploration-of-block-chain/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-Hans","comments":true,"permalink":"http://tsgsz.github.io/2018/06/18/the-first-exploration-of-block-chain/","path":"/2018/06/18/the-first-exploration-of-block-chain/","title":"区块链初探"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>区块链初探 | 云烟记事录</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="নেভিগেশন বারের দৃশ্যমানতা টগল করুন" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">云烟记事录</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">少主小册</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="সার্চ" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>হোম পেজ</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>আর্কাইভ এর তালিকা</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-overview-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          সূচীপত্র
+        </li>
+        <li class="sidebar-nav-overview">
+          সারাংশ
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">听松馆少主</p>
+  <div class="site-description" itemprop="description">这是一本小册子，从今天开始记录我小小的人生。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">পোস্ট এর তালিকা</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">ক্যাটাগরি এর তালিকা</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">ট্যাগ এর তালিকা</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/tsgsz" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;tsgsz" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://tsgsz.github.io/2018/06/18/the-first-exploration-of-block-chain/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="听松馆少主">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云烟记事录">
+      <meta itemprop="description" content="这是一本小册子，从今天开始记录我小小的人生。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="区块链初探 | 云烟记事录">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          区块链初探
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">প্রকাশিত হয়েছে</span>
+
+      <time title="তৈরি করা হয়েছেঃ 2018-06-18 00:00:00" itemprop="dateCreated datePublished" datetime="2018-06-18T00:00:00+08:00">2018-06-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">শ্রেনী</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%9B%E7%A0%96%E5%BC%95%E7%8E%89/" itemprop="url" rel="index"><span itemprop="name">抛砖引玉</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>大家好, 因为工作的原因, 最近在研究区块链,<br>理解需要交流才能透彻, 于是计划写这么一个系列, 来和大家交流交流我对区块链的理解.</p>
+<p>那么什么是区块链呢?<br>按照维基百科上的定义, 是一系列使用密码学保护的持续增长的被链接起来的区块, 区块指的是一个信息列表.</p>
+<p>这个定义读起来有点复杂, 我来翻译一下:</p>
+<p>如果你有一页纸, 上面记录了一条条的数据(你写的诗啊, 你记的账啊), 这个就是区块链里面的区块.</p>
+<p>你用了一种方法把这些记录写成了密文, 只有你读得懂, (比如爸爸叫阿玛, 哥哥叫欧巴) 这叫密码学保护</p>
+<p>把好多页纸首尾用胶水粘起来, 这是链.</p>
+<p>在区块链的技术中, 每一个区块都要求保留上一个区块的信息, 换句话说, 每一页纸都会写上上一页纸的简介, 这样每一页纸以及连接顺序都是不可修改的. 这里给个例子:</p>
+<ul>
+<li>纸一:  上一页纸: 无   记录: 上穷碧落下黄泉, 两处茫茫皆不见</li>
+<li>纸二:  上一页纸: 纸1, 长恨歌, 无   记录: 如今俱是异乡人, 相见更无因</li>
+<li>纸三:  上一页纸: 纸2, 韦庄, 纸1, 长恨歌    记录: 十年生死两茫茫</li>
+<li>…..</li>
+</ul>
+<p>这里面任一一张纸的改动, 都会导致后面的纸记录跟不上, 那么就可以认为这个链坏掉了.</p>
+<p>当然在真正的实现里面, 利用hash算法, 把上一页纸的信息变成了一个固定长度的字符串, 不会像例子里面这样记录.</p>
+<p>好的, 到目前为止, 我们可以看到区块链事实上就是一个数据的组织方式, 特点是三个:</p>
+<ol>
+<li><p>可以被追溯</p>
+</li>
+<li><p>不能被修改</p>
+</li>
+<li><p>被加密</p>
+</li>
+</ol>
+<p>那么区块链有什么用呢? 区块链真的仅仅就是这样的数据组织方式吗?</p>
+<p>让我们在下一篇文章里面来探讨.</p>
+<p>预测一下这个系列的下两篇文章应该是:</p>
+<p>&lt;比特币, 区块链的第一个种应用&gt;</p>
+<p>&lt;以太坊, 不仅仅是数据&gt;</p>
+<p>写得不好, 请大家多多指教, PS: 写这篇文章的还有一个目的是希望我的不是学金融或者IT的朋友能够看懂区块链, 所以如果写的哪里不够通俗易懂, 还请大家指出~~</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%8C%BA%E5%9D%97%E9%93%BE/" rel="tag"># 区块链</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2014/09/04/2014-09-04-introduction/" rel="prev" title=" 云烟记事录序">
+                  <i class="fa fa-angle-left"></i>  云烟记事录序
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2018/06/19/the-first-application-of-block-chain-bit-coin/" rel="next" title="比特币-区块链的第一个应用">
+                  比特币-区块链的第一个应用 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class=""></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">true</span>
+  </div>
+  <div class="powered-by"><a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> এর সাহায্যে চলছে
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="উপরে ফিরে যান">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
