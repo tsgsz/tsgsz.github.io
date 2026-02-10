@@ -139,16 +139,16 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-count">13</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">3</span>
         <span class="site-state-item-name">分类</span>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-count">10</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -170,6 +170,142 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://tsgsz.github.io/2014/08/24/2014-08-24-thinking-in-design-of-flip-gravity/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="听松馆少主">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云烟记事录">
+      <meta itemprop="description" content="这是一本小册子，从今天开始记录我小小的人生。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 云烟记事录">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2014/08/24/2014-08-24-thinking-in-design-of-flip-gravity/" class="post-title-link" itemprop="url">雪球快跑--设计与思考</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2014-08-24 17:20:20" itemprop="dateCreated datePublished" datetime="2014-08-24T17:20:20+08:00">2014-08-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%9B%E7%A0%96%E5%BC%95%E7%8E%89/" itemprop="url" rel="index"><span itemprop="name">抛砖引玉</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>好久好久没有写文章了，就像我之前说的，我实在是太懒了。</p>
+<p>前不久写了个游戏，叫雪球快跑，andorid，ios都已经上架，搜就能搜到。<br>毕竟是第一次写真正上架了的游戏，还是有很多感触的，会一一写成文章记录下来。<br>这一篇，就从设计开始吧。</p>
+<p>从大学开始，提到设计，想到的就是OO，那么究竟什么是OO呢？<br>面向对象这个词语实在是用得太多了，关联的东西也很多，无非第一下想到的就是继承，<br>多态什么的一堆词语。对于面向对象，我的理解其本质是数据和行为的聚合，<br>其它都是这个衍生出来的。因此，我去思考设计，其实无非就是如何去组织数据和行为，<br>数据和行为聚合在一起的，是面向对象，分离的则不是。当然在实际实现中，<br>这个的界限是很难区分清楚的，设计本来就是一个糊涂事…<br>很难去给出一个清晰的定义或者准则，所以，如果我继续这么玩概念虚下去，<br>那这篇文章也就没有存在的理由了，下面，<br>我会从《雪球快跑》这个游戏的具体设计开始说起，<br>这个设计未必好，但是是我自己的一种思路。</p>
+<p>首先介绍一下雪球快跑这个游戏吧，（ps：有兴趣的可以去玩玩，能不能玩到100分）。</p>
+<p>雪球快跑是一个冒险跑酷类的游戏，玩家通过点击屏幕操控重力，<br>雪球会根据重力来上下掉落，在地面上面的长时间滚动会导致雪球增大，<br>玩家需要控制重力来让雪球躲过黑洞，闪电，陨石等障碍物。<br>游戏本身很简单了，元素也不多，操作也简单，那么，我们如何去划分它会比较合理呢？</p>
+<p>天下所有的设计者都其实是在寻求一个设计来说服自己，让自己安心。<br>大部分之前精心设计考虑了大量情况的扩展都没有用，最后被重构了，<br>可是在设计的时候还是会纠结来纠结去，期待给出一个完美的答案，<br>不幸的是我就是这样的性格，于是在设计雪球快跑的时候，考虑了各种扩展的问题，<br>当然到最后也没有精力去具体实现，设计过程的本身，也是一种乐趣。</p>
+<p>这个游戏的设计和实现都是基于 cocos2dx 这个游戏框架的，对于 cocos2dx 这个框架，<br>我就不在这篇文章里面详细介绍了，简单地说一些概念，<br>Sprite 可以认为是绘制在屏幕上的实体，Layer 来承载 Sprite，Scene 来组织 Layer。<br>后面的设计会经常提及这几个玩意，因此，如果完全不知道我在说什么的，<br>建议先去了解一下 cocos2dx 这个框架。事实上这几个抽象是游戏设计的一种通用抽象，<br>聚集了无数前人的智慧。</p>
+<p>正式切入主题吧。<br>这个游戏看上去简单，可是第一次设计的时候，会发现其实挺复杂的。<br>比如说，当雪球碰到各种障碍物之后的表现，就有好多种，<br>又比如雪球虽然看上去在动，但是当雪球到了某个位置之后实际上就不动了，<br>也就是说事实上这时候是背景在动，又比如障碍物是随机生成的，<br>那么障碍物出现的策略是什么，如何保证雪球一定能过？<br>重力反转之后，雪球需要有坠落效果，遇到上下的地面都要停止坠落。<br>雪球方向反转之后滚动的方向也需要变化，等等。<br>这么多复杂的特性，会让人有种无从下手的感觉。</p>
+<p>游戏和我工作从事的后端服务器类的程序有一点很大的区别，在于游戏是有屏幕显示的，<br>复杂的显示效果和后端逻辑结合起来，会扰乱人的思维。<br>因此，我们不妨将整个游戏分为两个部分，一部分为展示，一部分为逻辑处理。<br>定义一个中间的结构，展示的时候仅仅是读取这个中间结构的值去绘图展示，<br>逻辑处理仅仅是改变这个中间结构的值，这样就将展示和逻辑处理分离开了。<br>可能这么说有点抽象，我举个例子吧，比如我们有一个逻辑是，球遇到黑洞会被吸进去。<br>那么按照不分开的写法，代码(伪代码)应该是:</p>
+<p><code>if ball.contact_with(black_hole) then ball.die and screen.show_ball_sucked()</code></p>
+<p>而按照分离的写法则应该是:</p>
+<p><code>if ball.contact_with(black_hold) then ball.die and ball.status = sucked</code></p>
+<p>然后再绘图的代码位置:</p>
+<p><code>if ball.status == sucked then screen.show_ball_sucked()</code></p>
+<p>似乎看上去代码变多了， 但是第二种写法的好处在于，我们把逻辑分离了，<br>当思考球撞到黑洞的时候，我们想的是求被黑洞吸进去了，<br>那至于吸进去的时候有没有旋转，有没有变小，我不管。<br>然后在写绘图的时候，则是，如果球现在的状态是被吸进去，那么我们就吸进去吧。<br>我才不管他为啥被吸进去。</p>
+<p>有了上面的这个认知，接下来的设计会轻松很多。<br>这是一个跑酷类的游戏，这类游戏有一个特点，除非游戏结束，<br>否则游戏是一直自己往前推进的，而不是玩家来控制进度。<br>类比一下，其实这类游戏和电影没啥两样，剧情在不停的往前发展，<br>玩家最多就是一个厉害一点的观众，时不时能稍微影响下剧情。</p>
+<p>于是，我们就可以建立这样一个模型，首先有个游戏的主体，自己在不停的演进，<br>比如球在自己滚啊，受重力的影响啊，镜头在不停的跟踪球啊，<br>球在看是不是和障碍物撞了啊，等等。接着是交互系统，<br>也就是说玩家可以通过点击屏幕去改变球的参数，但是这个改变实际上是延迟的，<br>也就是说，玩家的点击仅仅就是改变了一个值而已，真正起作用，<br>还是游戏自我演化的时候起作用。<br>然后就是我们上面提到过的那个显示模块，会不停的读取主体的数据去刷新屏幕。</p>
+<p>这样我们游戏的大体模型就出来了，我们来具体看看主体部分应该怎么设计。<br>首先，会有一个 World 这样一个类，它扮演着总体容器的这样一个角色。<br>所有的游戏中的实体，可见或者不可见的，我们都可以抽象出一个父类叫 Entity。<br>比如 Ball，BlackHole，Meteor，LightingBall ，Ground，<br>Background 都是 Entity 的特化，这样所有的 Entity 的生命周期都由 World 去掌控了。<br>这样我们只要去分别实现各个类，发现这个游戏就完了。。。真的是这样么？</p>
+<p>。。。当然不是了。。。不然我还写个啥？这时候球还只能够一个劲地往前滚，<br>一会儿就滚出屏幕了，而且那些障碍物的分布是怎样呢？换句话说，地图是怎么出来的呢？<br>于是，我们势必要抽象一个 camera 来跟踪球的位置，让球始终在左边 1&#x2F;3 的地方。<br>记得之前我反复强调的显示和逻辑分离么？这里就是最好的应用场景了，<br>想象一下你的逻辑里面不是球在往前滚而是背景在回退吧，<br>各种变速碰撞上下，是不是整个人都不好了？还好我们将这两部分逻辑抽开了，<br>球还是往前滚吧，camera 跟着滚就是了。</p>
+<p>好吧，还剩一个麻烦事，地图怎么玩呢？抽象一个 Loader 对象来做这件事吧，<br>现在是随机地图，于是用一个随机序列就可以了，若是之后要使用手动写地图，<br>那换个 loader 就好了，当然，<br>这里面用到了一些算法来保证障碍物出现的合理性，这篇文章谈设计，不说那些。</p>
+<p>好，到这里为止，雏形出来了，可是马上就能发现，World 这个类，做的事情太多了吧：<br>又要去管理 Entity 的生命周期，又要去驱动 camera 跟踪球，<br>又要去看球和障碍物们是不是碰撞了，还要调用 Loader 去拿接下来的地图。<br>这哪吃得消啊，抽出一个 logic 的类来做点事情吧，<br>World 老老实实管理生命周期就行了，甚至都不需要去理解 Entity 是什么，<br>至于后面的玩法改变，比如加了个球什么的，替换 logic 吧。</p>
+<p>到此为止，雪球快跑的初步架构是已经出来了，扩展性还是不错的，<br>很容易添加和删除东西。但是，如果就这么写着，各个模块并行，<br>你依然会发现逻辑不好描述，比如说重力改变了，而你的球正往前滚得欢呢，<br>你怎么去影响他呢？</p>
+<p>这里又说到游戏里面另外一个通用的设计了，所有的游戏都是一个巨大无比的循环，<br>根据屏幕刷新的帧数或者是其他参数来决定游戏循环计算的速度，也就是说，<br>你看上去一直在进行的游戏，其实从本质上只是一个一直在进行的迭代计算而已，<br>而你考虑的逻辑，只是每一次迭代中的算法，这么看，是不是很多复杂的情况都简单了？<br>比如你的重力改变了，没问题啊根本，应为我每次迭代重力都是一个参数，<br>你要么影响这次，要么影响下次，反正我也只是计算而已。</p>
+<p>好，到这里，游戏本身的设计就完了，当然有很多细节会需要关注，<br>但是这些不是我这篇文章要关注的重点了。</p>
+<p>这边文章的重点，真正开始了：</p>
+<p>我们来回顾一下先前的游戏的设计，看看和我们已知的一些其他知识，<br>有什么相同的地方呢？</p>
+<p>大循环，这个抽象，有没有让你想起什么来呢? 。。。。。。<br>是的，这可不就是一个服务器么。。。只不过服务器是一个请求过来，<br>对整个请求的处理作为一个循环，而游戏是你自定的参数或者是屏幕的帧数；<br>既然如此，那服务器设计用到的东西，完全可以照搬到游戏中嘛，<br>内存池的管理什么的都能用上了。那么我们更进一步，在服务器中，<br>拿 nginx 来说，一条 request 一般是一条数据，一堆的模块挂载上去之后各种处理。<br>那我们进化一下如何？在函数式编程中，有一种东西叫做 closure，<br>这玩意各种定义一大堆，简单的说，就是一段包含了运行环境的可执行代码。<br>想象一下，你的 nginx 接收的每个 request 是自执行的，<br>nginx 做的只是给它分配一个线程，是不是发现逻辑清晰好多？<br>这么做在服务器上未必合适，因为服务器要求的是一个稳定的持续可维护可测试的逻辑。<br>但是在游戏里面这么做，逻辑不要太简单了。<br>这就是我之前一直没有提的 event 机制了。<br>循环里面事实上触发了一堆的 event 去自己执行。<br>event 机制在 cocos2dx 中已经实现了，用得非常轻松。</p>
+<p>好，和服务器的对比完了，我们继续来看这个大循环的抽象，怎么感觉有点眼熟呢？<br>。。。。。。想想当年你在大学或者是找工作的时候，绞尽脑汁的去想算法。<br>思路是什么，是不是演化一次迭代？是不是找数列的通项公式？。。。<br>好吧，万物是相同的。</p>
+<p>好了，说够了大循环了，我们来看看别的。我上面举出那个例子，<br>雪球被黑洞吸收的时候的那个例子里面，显示和逻辑是怎么分开的？<br>逻辑改变了雪球的状态，显示根据状态去显示了。我偷偷藏了一点没说：<br>后来 logic 发现雪球挂了。。。于是判定游戏结束。<br>这里面有一个关键点是啥？<br>没错，就是状态机。状态机，只要 998，程序代码，你值得拥有。<br>状态机这个玩意的应用太多了，字符串匹配算法，<br>编译机制的词法推导语法推导，这不都是状态机么？<br>是的，游戏就是一个特殊的编译器。。。<br>我这么说是不是太不像话了？可是你仔细想想，他们其实没有本质区别的，<br>人如果能从处理字符串中得到乐趣，那编译工作又有啥不是一个游戏的呢？</p>
+<p>啰啰嗦嗦说了一堆，并不是试图去教什么东西，我只是一个小小求学者，<br>一直在试图用很多理由来说服自己这个设计不是那么差，于是就有了上面的文字。</p>
+<p>最后打个广告：</p>
+<p>雪球快跑, 孤独的小雪球跑啊跑,完全停不下来啊, 你和朋友谁跑得最远呢? 谁能跑到100分? </p>
+<p> 附一张300分的截图。。。 不要看我，肯定不是我玩的。。。</p>
+<img src="/2014/08/24/2014-08-24-thinking-in-design-of-flip-gravity/score.png" class="">
+
+<p>ios传送门:</p>
+<ul>
+<li><p>appsore : </p>
+<p><a href="https://itunes.apple.com/cn/app/xue-qiu-kuai-pao/id906007297?l=en&mt=8">https://itunes.apple.com/cn/app/xue-qiu-kuai-pao/id906007297?l=en&amp;mt=8</a></p>
+</li>
+</ul>
+<p>android传送门: </p>
+<ul>
+<li><p>小米商城 : </p>
+<p><a href="http://app.mi.com/detail/70714">http://app.mi.com/detail/70714</a> </p>
+</li>
+<li><p>豌豆荚 : </p>
+<p><a href="http://www.wandoujia.com/apps/klnd.flip_gravity">http://www.wandoujia.com/apps/klnd.flip_gravity</a> </p>
+</li>
+<li><p>91助手 : </p>
+<p><a href="http://apk.91.com/Soft/Detail.aspx?Platform=Android&f_id=40848946">http://apk.91.com/Soft/Detail.aspx?Platform=Android&amp;f_id=40848946</a> </p>
+</li>
+<li><p>360手机助手: </p>
+<p><a href="http://zhushou.360.cn/detail/index/soft_id/1939872?recrefer=SE_D_%E9%9B%AA%E7%90%83%E5%BF%AB%E8%B7%91">http://zhushou.360.cn/detail/index/soft_id/1939872?recrefer=SE_D_%E9%9B%AA%E7%90%83%E5%BF%AB%E8%B7%91</a></p>
+</li>
+<li><p>应用宝 : </p>
+<p><a href="http://android.myapp.com/myapp/detail.htm?apkName=klnd.flip_gravity">http://android.myapp.com/myapp/detail.htm?apkName=klnd.flip_gravity</a></p>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 

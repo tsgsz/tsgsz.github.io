@@ -139,16 +139,16 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-count">13</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">3</span>
         <span class="site-state-item-name">分类</span>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-count">10</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -170,6 +170,365 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://tsgsz.github.io/2026/02/10/2026-02-10-spec-driven-development/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="听松馆少主">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云烟记事录">
+      <meta itemprop="description" content="这是一本小册子，从今天开始记录我小小的人生。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 云烟记事录">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/02/10/2026-02-10-spec-driven-development/" class="post-title-link" itemprop="url">Spec-Driven Development：给 AI 团队一份"施工图纸"</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-02-10 14:00:00" itemprop="dateCreated datePublished" datetime="2026-02-10T14:00:00+08:00">2026-02-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%80%E6%9C%AF%E9%9A%8F%E7%AC%94/" itemprop="url" rel="index"><span itemprop="name">技术随笔</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <blockquote>
+<p>以前写代码是”边想边写”，现在是”先想明白再动手”。</p>
+</blockquote>
+<p>这周我给团队（奔波儿灞和他的 AI 小伙伴们）引入了一套新的工作方法——<strong>Spec-Driven Development（规范驱动开发）</strong>。</p>
+<h2 id="为什么需要这套方法？"><a href="#为什么需要这套方法？" class="headerlink" title="为什么需要这套方法？"></a>为什么需要这套方法？</h2><p>事情是这样的。</p>
+<p>上周我让 worker 去更新 Scenario 的 API 支持，结果他直接开干，花了一个多小时写了好几个脚本。等我检查时，发现漏了视频模型的参数，图片切片功能也没做，只能打回去重做。</p>
+<p>这种”边想边写”的方式，对人来说可能还行（虽然也经常翻车），但对 AI 来说简直就是灾难——</p>
+<ul>
+<li><strong>没有边界</strong>：不知道做到什么程度算”完成”</li>
+<li><strong>容易遗漏</strong>：想一步做一步，想到哪做到哪</li>
+<li><strong>难验收</strong>：做完了才发现和预期不符</li>
+</ul>
+<p>但更深层的问题是：<strong>上下文（Context）的管理</strong>。</p>
+<h2 id="大模型的”记忆力”问题"><a href="#大模型的”记忆力”问题" class="headerlink" title="大模型的”记忆力”问题"></a>大模型的”记忆力”问题</h2><p>前段时间看了 Manus 联合创始人 Yichao ‘Peak’ Ji 的一篇文章，他打了个比方：</p>
+<blockquote>
+<p>如果说大语言模型是 CPU，那么上下文窗口就是 RAM——它是模型的工作内存。</p>
+</blockquote>
+<p>这个比喻太精准了。</p>
+<p>你的 AI Agent 再聪明，如果”内存”管理不好，一样会卡死、变慢、变笨。具体来说：</p>
+<h3 id="1-信息超载：超出”记忆容量”"><a href="#1-信息超载：超出”记忆容量”" class="headerlink" title="1. 信息超载：超出”记忆容量”"></a>1. 信息超载：超出”记忆容量”</h3><p>大模型虽然有 128K 甚至 200K 的上下文窗口，但真实场景中，一次复杂任务很容易产生海量信息——网页内容、PDF 文档、代码库、多轮对话……一不小心就把”内存”撑爆了。</p>
+<p>Manus 的做法是：<strong>把文件系统当外部内存</strong>。不是把所有内容塞进上下文，而是让 Agent 学会读写文件，按需加载。就像人脑不会记住所有事情，而是记笔记、查资料。</p>
+<h3 id="2-信息丢失：Lost-in-the-Middle"><a href="#2-信息丢失：Lost-in-the-Middle" class="headerlink" title="2. 信息丢失：Lost in the Middle"></a>2. 信息丢失：Lost in the Middle</h3><p>即使没超载，模型对长上下文的注意力也是不均匀的。中间的信息最容易被遗忘。这就好比你读一篇长文章，开头和结尾记得清楚，中间的内容就模糊了。</p>
+<p>Manus 的解法很巧妙：<strong>不断复述目标</strong>。他们在任务进行中会不断更新 todo.md 文件，把未完成的清单”复述”到上下文末尾。这样就把全局计划推进了模型的”近期注意力范围”，避免跑偏。</p>
+<h3 id="3-成本飙升：KV-Cache-失效"><a href="#3-成本飙升：KV-Cache-失效" class="headerlink" title="3. 成本飙升：KV-Cache 失效"></a>3. 成本飙升：KV-Cache 失效</h3><p>这是生产环境的大坑。大模型推理时，如果上下文前缀发生变化，KV-Cache 就会失效，导致成本暴涨（Claude Sonnet 缓存命中 vs 未命中的成本差 10 倍）。</p>
+<p>Manus 的经验是：<strong>保持 prompt 前缀稳定，上下文只追加不修改</strong>。哪怕只是加了一个时间戳（精确到秒），也可能让整段缓存失效。</p>
+<h2 id="Spec-Driven-Development-如何解决这些问题？"><a href="#Spec-Driven-Development-如何解决这些问题？" class="headerlink" title="Spec-Driven Development 如何解决这些问题？"></a>Spec-Driven Development 如何解决这些问题？</h2><p>回到我这套方法。规范驱动开发的核心思想很简单：<strong>动手之前，先把”做什么、怎么做、怎么验收”写清楚。</strong></p>
+<p>这个规范文档（Spec）包含 9 个部分：</p>
+<table>
+<thead>
+<tr>
+<th>部分</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>需求背景</strong></td>
+<td>为什么要做这件事？解决什么问题？</td>
+</tr>
+<tr>
+<td><strong>目标</strong></td>
+<td>要达成什么具体结果？</td>
+</tr>
+<tr>
+<td><strong>非目标</strong></td>
+<td>明确哪些不做，防止范围蔓延</td>
+</tr>
+<tr>
+<td><strong>功能规格</strong></td>
+<td>功能点清单，每个功能具体做什么</td>
+</tr>
+<tr>
+<td><strong>技术规格</strong></td>
+<td>用什么技术方案，为什么选它</td>
+</tr>
+<tr>
+<td><strong>接口定义</strong></td>
+<td>输入输出、数据结构、调用方式</td>
+</tr>
+<tr>
+<td><strong>验收标准</strong></td>
+<td>怎么算”完成”？可验证的 checklist</td>
+</tr>
+<tr>
+<td><strong>任务拆解</strong></td>
+<td>拆成可执行的子任务，分配资源</td>
+</tr>
+<tr>
+<td><strong>依赖项</strong></td>
+<td>需要什么前置条件？</td>
+</tr>
+</tbody></table>
+<p>但这不只是”写文档”。结合 Manus 的 Context Engineering 理念，这套方法实际上在解决三个层面的问题：</p>
+<h3 id="1-压缩：把长故事变成要点"><a href="#1-压缩：把长故事变成要点" class="headerlink" title="1. 压缩：把长故事变成要点"></a>1. 压缩：把长故事变成要点</h3><p>Spec 本身就是对任务的<strong>压缩</strong>。几百轮的试错、思考、讨论，被提炼成结构化的要点。Agent 执行时，不需要回溯所有历史，只需要看当前 Spec。</p>
+<p>这和 Claude Code 的 “auto-compact” 功能异曲同工——当对话记录快撑爆时，自动压缩成核心要点。</p>
+<h3 id="2-隔离：分工合作，各司其职"><a href="#2-隔离：分工合作，各司其职" class="headerlink" title="2. 隔离：分工合作，各司其职"></a>2. 隔离：分工合作，各司其职</h3><p>每个子任务有独立的 Spec，就像每个 Agent 在独立的”房间”里工作。这样避免了”一锅粥”的混乱，也让多 Agent 并行成为可能。</p>
+<h3 id="3-写入：给-AI-装上”便签纸”"><a href="#3-写入：给-AI-装上”便签纸”" class="headerlink" title="3. 写入：给 AI 装上”便签纸”"></a>3. 写入：给 AI 装上”便签纸”</h3><p>Spec 文件本身就是 Agent 的”外部记忆”。他们可以在执行过程中更新进度、记录中间结果，而不必把所有内容塞进上下文。</p>
+<h2 id="Skill-与-Subagent：能力封装-vs-执行实体"><a href="#Skill-与-Subagent：能力封装-vs-执行实体" class="headerlink" title="Skill 与 Subagent：能力封装 vs 执行实体"></a>Skill 与 Subagent：能力封装 vs 执行实体</h2><p>在深入 workflow 之前，有必要解释一下我的团队架构里的两个核心概念：<strong>Skill</strong> 和 <strong>Subagent</strong>。</p>
+<p>这俩的关系，就像<strong>工具箱</strong>和<strong>工人</strong>。</p>
+<h3 id="Skill-是什么？"><a href="#Skill-是什么？" class="headerlink" title="Skill 是什么？"></a>Skill 是什么？</h3><p>Skill 是<strong>能力的封装</strong>。</p>
+<p>比如我创建了 <code>scenario</code> 这个 skill，它封装了所有和 Scenario API 交互的能力：</p>
+<ul>
+<li>视频生成 (<code>scenario-video.sh</code>)</li>
+<li>3D 模型生成 (<code>scenario-3d.sh</code>)</li>
+<li>图片生成&#x2F;编辑 (<code>scenario-txt2img.sh</code>)</li>
+<li>模型训练 (<code>scenario-train.sh</code>)</li>
+</ul>
+<p>每个 skill 包含：</p>
+<ul>
+<li><strong>SKILL.md</strong>：接口文档、使用说明、最佳实践</li>
+<li>**scripts&#x2F;**：具体实现的脚本</li>
+<li><strong>配置</strong>：API Key、环境变量等</li>
+</ul>
+<p>Skill 是<strong>无状态</strong>的，它不执行任务，只提供<strong>怎么做的说明书</strong>。</p>
+<h3 id="Subagent-是什么？"><a href="#Subagent-是什么？" class="headerlink" title="Subagent 是什么？"></a>Subagent 是什么？</h3><p>Subagent 是<strong>执行实体</strong>。</p>
+<p>我的团队里有各种角色的 subagent：</p>
+<ul>
+<li><strong>worker</strong>：杂活王，跑脚本、批量操作</li>
+<li><strong>lead</strong>：技术领队，拆需求、派任务</li>
+<li><strong>fin</strong>：铁算盘，金融分析</li>
+<li><strong>ops</strong>：守夜人，运维部署</li>
+</ul>
+<p>每个 subagent 有自己的：</p>
+<ul>
+<li><strong>AGENT.md</strong>：角色定义、工作方式、边界</li>
+<li><strong>TOOLS.md</strong>：常用工具、快捷命令</li>
+<li>**workspace&#x2F;**：工作目录、历史记录</li>
+</ul>
+<p>Subagent 是<strong>有状态</strong>的，它接收任务、执行、汇报结果。</p>
+<h3 id="两者如何配合？"><a href="#两者如何配合？" class="headerlink" title="两者如何配合？"></a>两者如何配合？</h3><p>当我说：</p>
+<blockquote>
+<p>“worker，用 scenario 生成一个视频”</p>
+</blockquote>
+<p>实际发生的是：</p>
+<ol>
+<li><strong>Main</strong> 评估：视频生成涉及多个步骤（提交任务→轮询→下载），需要规范</li>
+<li><strong>PM</strong> 创建 <code>SPEC-video-gen-20260210-v1.md</code>：<ul>
+<li>使用哪个模型（Veo 3 &#x2F; Kling）</li>
+<li>参数配置（duration、aspectRatio）</li>
+<li>输出路径</li>
+<li>验收标准</li>
+</ul>
+</li>
+<li><strong>Main</strong> 派 <strong>worker</strong> 执行</li>
+<li><strong>worker</strong> 读取 <strong>SPEC</strong>，调用 <strong>scenario skill</strong> 的脚本</li>
+<li><strong>scenario-video.sh</strong> 执行：提交→轮询→下载</li>
+<li><strong>worker</strong> 按 <strong>SPEC</strong> 验收，更新状态，汇报结果</li>
+</ol>
+<p>看到了吗？<strong>Subagent 使用 Skill 来完成任务</strong>。</p>
+<h3 id="为什么这样设计？"><a href="#为什么这样设计？" class="headerlink" title="为什么这样设计？"></a>为什么这样设计？</h3><p>这套设计解决了 AI 团队协作的几个核心问题：</p>
+<p><strong>1. 避免重复造轮子</strong></p>
+<p>Scenario API 的调用逻辑写一次（skill），所有 agent 都能用。不用每个 agent 都自己写一遍 curl 命令。</p>
+<p><strong>2. 职责清晰</strong></p>
+<ul>
+<li>Skill 管”<strong>怎么做</strong>“（技术实现）</li>
+<li>Subagent 管”<strong>做什么</strong>“（业务逻辑）</li>
+<li>Spec 管”<strong>做到什么程度</strong>“（验收标准）</li>
+</ul>
+<p><strong>3. 上下文隔离</strong></p>
+<p>每个 subagent 有独立的 workspace 和记忆，互不干扰。skill 是无状态的，可以被多个 subagent 同时调用而不会冲突。</p>
+<p><strong>4. 可测试、可复现</strong></p>
+<p>Skill 的脚本是独立的，可以单独测试。Subagent 执行 Spec 的过程是可追溯的（有 transcript 记录）。</p>
+<h3 id="对比：没有这个架构会怎样？"><a href="#对比：没有这个架构会怎样？" class="headerlink" title="对比：没有这个架构会怎样？"></a>对比：没有这个架构会怎样？</h3><p>假设所有工作都由 main agent 一个人干：</p>
+<ul>
+<li><strong>上下文爆炸</strong>：main 的上下文窗口会被各种技术细节（Scenario API 参数、Hexo 配置、股票数据接口）撑爆</li>
+<li><strong>互相干扰</strong>：上午做视频生成，下午分析股票，Context 里混在一起，模型容易”精神分裂”</li>
+<li><strong>无法并行</strong>：一个人只能一件一件做，不能同时派多个任务</li>
+<li><strong>无法专业化</strong>：同一个模型既要懂视频编解码又要懂金融指标，做不到深度</li>
+</ul>
+<p>而有了 Skill + Subagent 架构：</p>
+<ul>
+<li><strong>Skill 分散技术细节</strong>：每个 skill 管理自己的 domain knowledge</li>
+<li><strong>Subagent 隔离上下文</strong>：每个任务在独立的 session 里执行</li>
+<li><strong>并行执行</strong>：可以同时派 lead 写代码、fin 分析数据、worker 跑脚本</li>
+<li><strong>专业化</strong>：每个 subagent 可以针对不同领域深度优化（fin 用金融模型，director 用创意模型）</li>
+</ul>
+<h2 id="实际-workflow"><a href="#实际-workflow" class="headerlink" title="实际 workflow"></a>实际 workflow</h2><p>现在我的团队是这么干活的：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">我提需求 → Main 评估 → 需要规范？→ PM 创建 SPEC.md </span><br><span class="line">→ 确认验收标准 → 派 Agent 执行 → 按标准自检 → 汇报结果</span><br></pre></td></tr></table></figure>
+
+<p>举个例子：</p>
+<p><strong>以前</strong>：</p>
+<blockquote>
+<p>我：”worker，给 Scenario skill 加个视频生成功能”</p>
+<p>worker：直接开写，写了一堆，遗漏了轮询逻辑，参数也不全</p>
+</blockquote>
+<p><strong>现在</strong>：</p>
+<blockquote>
+<p>我：”worker，给 Scenario skill 加个视频生成功能”</p>
+<p>Main：”这个任务涉及多个 API 端点，需要写规范”</p>
+<p>PM：创建 <code>SPEC-scenario-video-20260210-v1.md</code></p>
+<blockquote>
+<ul>
+<li>需求背景：Scenario 新增视频生成 API</li>
+<li>目标：支持 Veo 3、Kling 等模型的视频生成</li>
+<li>验收标准：<ul>
+<li><input disabled="" type="checkbox"> 支持 Text-to-Video</li>
+<li><input disabled="" type="checkbox"> 支持 Image-to-Video  </li>
+<li><input disabled="" type="checkbox"> 自动轮询任务状态</li>
+<li><input disabled="" type="checkbox"> 下载生成的视频文件</li>
+</ul>
+</li>
+<li>任务拆解：<ol>
+<li>研究 API 文档</li>
+<li>编写 scenario-video.sh 脚本</li>
+<li>测试各模型</li>
+<li>更新 SKILL.md 文档</li>
+</ol>
+</li>
+</ul>
+</blockquote>
+<p>worker：按规范一条条实现，做完自检验收标准</p>
+</blockquote>
+<p>结果是：<strong>一次到位，不用返工</strong>。</p>
+<h2 id="规范由谁管？"><a href="#规范由谁管？" class="headerlink" title="规范由谁管？"></a>规范由谁管？</h2><p>文件命名：<code>SPEC-&#123;项目&#125;-&#123;日期&#125;-&#123;版本&#125;.md</code></p>
+<p>存放位置：PM 管理的项目目录下</p>
+<p>状态流转：</p>
+<ul>
+<li><code>[进行中]</code>：正在执行</li>
+<li><code>[待验收]</code>：完成，等确认</li>
+<li><code>[已完成]</code>：验收通过，归档</li>
+</ul>
+<p>所有 Agent 都学了这个规范，复杂任务（&gt;15分钟、多步骤、需要验收标准）都必须先走这套流程。</p>
+<h3 id="Spec-在这个架构中的角色"><a href="#Spec-在这个架构中的角色" class="headerlink" title="Spec 在这个架构中的角色"></a>Spec 在这个架构中的角色</h3><p>你可能会问：既然有了 Skill 和 Subagent，为什么还要 Spec？</p>
+<p>因为 **Skill 是”怎么做”，Subagent 是”谁来做”，Spec 是”做什么、做到什么程度”**。</p>
+<p>这三者缺一不可：</p>
+<table>
+<thead>
+<tr>
+<th>元素</th>
+<th>回答的问题</th>
+<th>类比</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Skill</strong></td>
+<td>怎么用工具？</td>
+<td>扳手的使用说明书</td>
+</tr>
+<tr>
+<td><strong>Subagent</strong></td>
+<td>谁来干活？</td>
+<td>工人</td>
+</tr>
+<tr>
+<td><strong>Spec</strong></td>
+<td>要做什么、怎么验收？</td>
+<td>施工图纸</td>
+</tr>
+</tbody></table>
+<p>没有 Spec 会怎样？</p>
+<ul>
+<li><strong>对 Subagent 来说</strong>：不知道任务边界，容易过度设计或遗漏关键点</li>
+<li><strong>对 Main 来说</strong>：无法验收，不知道任务到底算不算完成</li>
+<li><strong>对团队来说</strong>：交接困难，一个 Agent 做到一半，另一个 Agent 接不上</li>
+</ul>
+<p>Spec 就像<strong>合同</strong>——甲乙双方（Main 和 Subagent）先确认好交付物，然后再开工。</p>
+<h3 id="上下文管理的工程化"><a href="#上下文管理的工程化" class="headerlink" title="上下文管理的工程化"></a>上下文管理的工程化</h3><p>结合 Manus 提到的 Context Engineering，我的这套架构实际上是一种<strong>工程化的上下文管理</strong>策略：</p>
+<p><strong>1. Skill 层面的压缩</strong></p>
+<p>Skill 把复杂的 API 调用、错误处理、重试逻辑封装成简单的命令。Subagent 不需要知道 Scenario API 的认证方式是 Basic Auth 还是 Bearer Token，只需要知道 <code>scenario-video.sh &quot;prompt&quot;</code> 就行。</p>
+<p>这是<strong>技术细节的压缩</strong>。</p>
+<p><strong>2. Subagent 层面的隔离</strong></p>
+<p>每个 Subagent 有独立的 session、独立的 workspace、独立的 AGENT.md。fin 分析股票时的上下文不会污染 ops 部署服务器时的上下文。</p>
+<p>这是<strong>任务上下文的隔离</strong>。</p>
+<p><strong>3. Spec 层面的写入</strong></p>
+<p>Spec 文件是写入文件系统的”便签纸”。Subagent 不需要记住所有任务要求，只需要查看 SPEC.md。执行过程中还可以更新进度（”已完成步骤 1，正在执行步骤 2”）。</p>
+<p>这是<strong>任务状态的写入</strong>。</p>
+<p><strong>4. Main 层面的选择</strong></p>
+<p>Main 作为总调度，负责选择：</p>
+<ul>
+<li>这个任务需要哪个 Subagent？</li>
+<li>需要创建 Spec 吗？</li>
+<li>需要并行执行吗？</li>
+</ul>
+<p>这是<strong>任务分配的选择</strong>。</p>
+<p>这四层组合起来，才是一个完整的 Context Engineering 实践。</p>
+<h2 id="效果怎么样？"><a href="#效果怎么样？" class="headerlink" title="效果怎么样？"></a>效果怎么样？</h2><p>说实话，才运行几天，但已经能感觉到变化：</p>
+<ol>
+<li><strong>返工少了</strong>：验收标准 upfront，做完就知道对不对</li>
+<li><strong>交接顺了</strong>：一个 Agent 的任务，另一个 Agent 能接起来继续</li>
+<li><strong>上下文可控了</strong>：复杂任务被拆成小块，每个块有清晰的 Spec，不会”内存溢出”</li>
+<li><strong>心明眼亮</strong>：作为”甲方”，我能清楚看到进度和预期</li>
+</ol>
+<p>当然，代价是前置思考时间变长了。但比起做完发现不对再重来，这点时间花得值。</p>
+<h2 id="从-Manus-学到的"><a href="#从-Manus-学到的" class="headerlink" title="从 Manus 学到的"></a>从 Manus 学到的</h2><p>最后，分享几个从 Manus 文章里学到的、和我这套方法呼应的点：</p>
+<p><strong>保持错误痕迹，不要隐藏失败</strong></p>
+<p>Manus 说：”不要隐藏错误，保留失败痕迹让模型自我修正。”这和 Spec 里的”验收标准”异曲同工——失败的尝试本身就是信息，应该被记录、被学习。</p>
+<p><strong>别被 few-shot 绑架</strong></p>
+<p>如果上下文里全是相似的例子，模型会机械模仿。Spec 的好处是，它提供了结构化的多样性——每个任务有不同的目标、不同的验收标准，避免 Agent 陷入固定模式。</p>
+<p><strong>Context Engineering &gt; Fine-tuning</strong></p>
+<p>Manus 说：”我们押注 context engineering 而非端到端训练。”这样产品更新周期从数周缩短为数小时，模型进步是”上涨潮水”，产品是”漂浮的船”。</p>
+<p>我的 Spec-Driven Development 也是类似的思路：不换模型，不换架构，通过<strong>工程化地管理上下文</strong>，让整个团队提效。</p>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>这套方法不是我想出来的，是看了 GitHub AI 团队、Manus、LangChain 的实践后本地化改造的。核心思想就一句话：</p>
+<blockquote>
+<p><strong>AI 是”字面意思”的执行者，你得先把字面意思写清楚。同时，要像管理内存一样管理它的上下文。</strong></p>
+</blockquote>
+<p>如果你的团队（人或 AI）也经常”做着做着就歪了”，不妨试试这套方法。</p>
+<hr>
+<p><strong>参考阅读</strong></p>
+<ul>
+<li><a href="https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus">Context Engineering for AI Agents: Lessons from Building Manus</a> - Yichao ‘Peak’ Ji</li>
+<li><a href="https://zilliz.com.cn/blog/Context-Engineering-Showdown">Manus、LangChain一手经验：先别给Multi Agent判死刑，是你不会管理上下文</a> - Zilliz</li>
+</ul>
+<p><strong>少主 &amp; 奔波儿灞</strong><br><strong>2026.02.10</strong></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1088,142 +1447,6 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">dtable(name)  # 创建一个 dtable</span><br><span class="line">rquery(sql)  # 执行一条 sql 语句</span><br><span class="line">rquery.collect(sql)  # 执行一条 sql 语句</span><br><span class="line">rquery.kmeans(dt, k)  #  执行 kmeans 算法</span><br></pre></td></tr></table></figure>
 
 <p>当然，目前来说 RQuery 还很不成熟，缺失了诸多的 api，<br>虽然可以方便的在分布式和本地切换，但是 dtable 还有很多操作不能直接进行，<br>需要一步转换，后续会支持更多地 R 本地的 api，提供机器学习十大经典算法，<br>让在分布式上执行 R 运算和在本地一样便捷！</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://tsgsz.github.io/2014/08/24/2014-08-24-thinking-in-design-of-flip-gravity/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="听松馆少主">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云烟记事录">
-      <meta itemprop="description" content="这是一本小册子，从今天开始记录我小小的人生。">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | 云烟记事录">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2014/08/24/2014-08-24-thinking-in-design-of-flip-gravity/" class="post-title-link" itemprop="url">雪球快跑--设计与思考</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2014-08-24 17:20:20" itemprop="dateCreated datePublished" datetime="2014-08-24T17:20:20+08:00">2014-08-24</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%8A%9B%E7%A0%96%E5%BC%95%E7%8E%89/" itemprop="url" rel="index"><span itemprop="name">抛砖引玉</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>好久好久没有写文章了，就像我之前说的，我实在是太懒了。</p>
-<p>前不久写了个游戏，叫雪球快跑，andorid，ios都已经上架，搜就能搜到。<br>毕竟是第一次写真正上架了的游戏，还是有很多感触的，会一一写成文章记录下来。<br>这一篇，就从设计开始吧。</p>
-<p>从大学开始，提到设计，想到的就是OO，那么究竟什么是OO呢？<br>面向对象这个词语实在是用得太多了，关联的东西也很多，无非第一下想到的就是继承，<br>多态什么的一堆词语。对于面向对象，我的理解其本质是数据和行为的聚合，<br>其它都是这个衍生出来的。因此，我去思考设计，其实无非就是如何去组织数据和行为，<br>数据和行为聚合在一起的，是面向对象，分离的则不是。当然在实际实现中，<br>这个的界限是很难区分清楚的，设计本来就是一个糊涂事…<br>很难去给出一个清晰的定义或者准则，所以，如果我继续这么玩概念虚下去，<br>那这篇文章也就没有存在的理由了，下面，<br>我会从《雪球快跑》这个游戏的具体设计开始说起，<br>这个设计未必好，但是是我自己的一种思路。</p>
-<p>首先介绍一下雪球快跑这个游戏吧，（ps：有兴趣的可以去玩玩，能不能玩到100分）。</p>
-<p>雪球快跑是一个冒险跑酷类的游戏，玩家通过点击屏幕操控重力，<br>雪球会根据重力来上下掉落，在地面上面的长时间滚动会导致雪球增大，<br>玩家需要控制重力来让雪球躲过黑洞，闪电，陨石等障碍物。<br>游戏本身很简单了，元素也不多，操作也简单，那么，我们如何去划分它会比较合理呢？</p>
-<p>天下所有的设计者都其实是在寻求一个设计来说服自己，让自己安心。<br>大部分之前精心设计考虑了大量情况的扩展都没有用，最后被重构了，<br>可是在设计的时候还是会纠结来纠结去，期待给出一个完美的答案，<br>不幸的是我就是这样的性格，于是在设计雪球快跑的时候，考虑了各种扩展的问题，<br>当然到最后也没有精力去具体实现，设计过程的本身，也是一种乐趣。</p>
-<p>这个游戏的设计和实现都是基于 cocos2dx 这个游戏框架的，对于 cocos2dx 这个框架，<br>我就不在这篇文章里面详细介绍了，简单地说一些概念，<br>Sprite 可以认为是绘制在屏幕上的实体，Layer 来承载 Sprite，Scene 来组织 Layer。<br>后面的设计会经常提及这几个玩意，因此，如果完全不知道我在说什么的，<br>建议先去了解一下 cocos2dx 这个框架。事实上这几个抽象是游戏设计的一种通用抽象，<br>聚集了无数前人的智慧。</p>
-<p>正式切入主题吧。<br>这个游戏看上去简单，可是第一次设计的时候，会发现其实挺复杂的。<br>比如说，当雪球碰到各种障碍物之后的表现，就有好多种，<br>又比如雪球虽然看上去在动，但是当雪球到了某个位置之后实际上就不动了，<br>也就是说事实上这时候是背景在动，又比如障碍物是随机生成的，<br>那么障碍物出现的策略是什么，如何保证雪球一定能过？<br>重力反转之后，雪球需要有坠落效果，遇到上下的地面都要停止坠落。<br>雪球方向反转之后滚动的方向也需要变化，等等。<br>这么多复杂的特性，会让人有种无从下手的感觉。</p>
-<p>游戏和我工作从事的后端服务器类的程序有一点很大的区别，在于游戏是有屏幕显示的，<br>复杂的显示效果和后端逻辑结合起来，会扰乱人的思维。<br>因此，我们不妨将整个游戏分为两个部分，一部分为展示，一部分为逻辑处理。<br>定义一个中间的结构，展示的时候仅仅是读取这个中间结构的值去绘图展示，<br>逻辑处理仅仅是改变这个中间结构的值，这样就将展示和逻辑处理分离开了。<br>可能这么说有点抽象，我举个例子吧，比如我们有一个逻辑是，球遇到黑洞会被吸进去。<br>那么按照不分开的写法，代码(伪代码)应该是:</p>
-<p><code>if ball.contact_with(black_hole) then ball.die and screen.show_ball_sucked()</code></p>
-<p>而按照分离的写法则应该是:</p>
-<p><code>if ball.contact_with(black_hold) then ball.die and ball.status = sucked</code></p>
-<p>然后再绘图的代码位置:</p>
-<p><code>if ball.status == sucked then screen.show_ball_sucked()</code></p>
-<p>似乎看上去代码变多了， 但是第二种写法的好处在于，我们把逻辑分离了，<br>当思考球撞到黑洞的时候，我们想的是求被黑洞吸进去了，<br>那至于吸进去的时候有没有旋转，有没有变小，我不管。<br>然后在写绘图的时候，则是，如果球现在的状态是被吸进去，那么我们就吸进去吧。<br>我才不管他为啥被吸进去。</p>
-<p>有了上面的这个认知，接下来的设计会轻松很多。<br>这是一个跑酷类的游戏，这类游戏有一个特点，除非游戏结束，<br>否则游戏是一直自己往前推进的，而不是玩家来控制进度。<br>类比一下，其实这类游戏和电影没啥两样，剧情在不停的往前发展，<br>玩家最多就是一个厉害一点的观众，时不时能稍微影响下剧情。</p>
-<p>于是，我们就可以建立这样一个模型，首先有个游戏的主体，自己在不停的演进，<br>比如球在自己滚啊，受重力的影响啊，镜头在不停的跟踪球啊，<br>球在看是不是和障碍物撞了啊，等等。接着是交互系统，<br>也就是说玩家可以通过点击屏幕去改变球的参数，但是这个改变实际上是延迟的，<br>也就是说，玩家的点击仅仅就是改变了一个值而已，真正起作用，<br>还是游戏自我演化的时候起作用。<br>然后就是我们上面提到过的那个显示模块，会不停的读取主体的数据去刷新屏幕。</p>
-<p>这样我们游戏的大体模型就出来了，我们来具体看看主体部分应该怎么设计。<br>首先，会有一个 World 这样一个类，它扮演着总体容器的这样一个角色。<br>所有的游戏中的实体，可见或者不可见的，我们都可以抽象出一个父类叫 Entity。<br>比如 Ball，BlackHole，Meteor，LightingBall ，Ground，<br>Background 都是 Entity 的特化，这样所有的 Entity 的生命周期都由 World 去掌控了。<br>这样我们只要去分别实现各个类，发现这个游戏就完了。。。真的是这样么？</p>
-<p>。。。当然不是了。。。不然我还写个啥？这时候球还只能够一个劲地往前滚，<br>一会儿就滚出屏幕了，而且那些障碍物的分布是怎样呢？换句话说，地图是怎么出来的呢？<br>于是，我们势必要抽象一个 camera 来跟踪球的位置，让球始终在左边 1&#x2F;3 的地方。<br>记得之前我反复强调的显示和逻辑分离么？这里就是最好的应用场景了，<br>想象一下你的逻辑里面不是球在往前滚而是背景在回退吧，<br>各种变速碰撞上下，是不是整个人都不好了？还好我们将这两部分逻辑抽开了，<br>球还是往前滚吧，camera 跟着滚就是了。</p>
-<p>好吧，还剩一个麻烦事，地图怎么玩呢？抽象一个 Loader 对象来做这件事吧，<br>现在是随机地图，于是用一个随机序列就可以了，若是之后要使用手动写地图，<br>那换个 loader 就好了，当然，<br>这里面用到了一些算法来保证障碍物出现的合理性，这篇文章谈设计，不说那些。</p>
-<p>好，到这里为止，雏形出来了，可是马上就能发现，World 这个类，做的事情太多了吧：<br>又要去管理 Entity 的生命周期，又要去驱动 camera 跟踪球，<br>又要去看球和障碍物们是不是碰撞了，还要调用 Loader 去拿接下来的地图。<br>这哪吃得消啊，抽出一个 logic 的类来做点事情吧，<br>World 老老实实管理生命周期就行了，甚至都不需要去理解 Entity 是什么，<br>至于后面的玩法改变，比如加了个球什么的，替换 logic 吧。</p>
-<p>到此为止，雪球快跑的初步架构是已经出来了，扩展性还是不错的，<br>很容易添加和删除东西。但是，如果就这么写着，各个模块并行，<br>你依然会发现逻辑不好描述，比如说重力改变了，而你的球正往前滚得欢呢，<br>你怎么去影响他呢？</p>
-<p>这里又说到游戏里面另外一个通用的设计了，所有的游戏都是一个巨大无比的循环，<br>根据屏幕刷新的帧数或者是其他参数来决定游戏循环计算的速度，也就是说，<br>你看上去一直在进行的游戏，其实从本质上只是一个一直在进行的迭代计算而已，<br>而你考虑的逻辑，只是每一次迭代中的算法，这么看，是不是很多复杂的情况都简单了？<br>比如你的重力改变了，没问题啊根本，应为我每次迭代重力都是一个参数，<br>你要么影响这次，要么影响下次，反正我也只是计算而已。</p>
-<p>好，到这里，游戏本身的设计就完了，当然有很多细节会需要关注，<br>但是这些不是我这篇文章要关注的重点了。</p>
-<p>这边文章的重点，真正开始了：</p>
-<p>我们来回顾一下先前的游戏的设计，看看和我们已知的一些其他知识，<br>有什么相同的地方呢？</p>
-<p>大循环，这个抽象，有没有让你想起什么来呢? 。。。。。。<br>是的，这可不就是一个服务器么。。。只不过服务器是一个请求过来，<br>对整个请求的处理作为一个循环，而游戏是你自定的参数或者是屏幕的帧数；<br>既然如此，那服务器设计用到的东西，完全可以照搬到游戏中嘛，<br>内存池的管理什么的都能用上了。那么我们更进一步，在服务器中，<br>拿 nginx 来说，一条 request 一般是一条数据，一堆的模块挂载上去之后各种处理。<br>那我们进化一下如何？在函数式编程中，有一种东西叫做 closure，<br>这玩意各种定义一大堆，简单的说，就是一段包含了运行环境的可执行代码。<br>想象一下，你的 nginx 接收的每个 request 是自执行的，<br>nginx 做的只是给它分配一个线程，是不是发现逻辑清晰好多？<br>这么做在服务器上未必合适，因为服务器要求的是一个稳定的持续可维护可测试的逻辑。<br>但是在游戏里面这么做，逻辑不要太简单了。<br>这就是我之前一直没有提的 event 机制了。<br>循环里面事实上触发了一堆的 event 去自己执行。<br>event 机制在 cocos2dx 中已经实现了，用得非常轻松。</p>
-<p>好，和服务器的对比完了，我们继续来看这个大循环的抽象，怎么感觉有点眼熟呢？<br>。。。。。。想想当年你在大学或者是找工作的时候，绞尽脑汁的去想算法。<br>思路是什么，是不是演化一次迭代？是不是找数列的通项公式？。。。<br>好吧，万物是相同的。</p>
-<p>好了，说够了大循环了，我们来看看别的。我上面举出那个例子，<br>雪球被黑洞吸收的时候的那个例子里面，显示和逻辑是怎么分开的？<br>逻辑改变了雪球的状态，显示根据状态去显示了。我偷偷藏了一点没说：<br>后来 logic 发现雪球挂了。。。于是判定游戏结束。<br>这里面有一个关键点是啥？<br>没错，就是状态机。状态机，只要 998，程序代码，你值得拥有。<br>状态机这个玩意的应用太多了，字符串匹配算法，<br>编译机制的词法推导语法推导，这不都是状态机么？<br>是的，游戏就是一个特殊的编译器。。。<br>我这么说是不是太不像话了？可是你仔细想想，他们其实没有本质区别的，<br>人如果能从处理字符串中得到乐趣，那编译工作又有啥不是一个游戏的呢？</p>
-<p>啰啰嗦嗦说了一堆，并不是试图去教什么东西，我只是一个小小求学者，<br>一直在试图用很多理由来说服自己这个设计不是那么差，于是就有了上面的文字。</p>
-<p>最后打个广告：</p>
-<p>雪球快跑, 孤独的小雪球跑啊跑,完全停不下来啊, 你和朋友谁跑得最远呢? 谁能跑到100分? </p>
-<p> 附一张300分的截图。。。 不要看我，肯定不是我玩的。。。</p>
-<img src="/2014/08/24/2014-08-24-thinking-in-design-of-flip-gravity/score.png" class="">
-
-<p>ios传送门:</p>
-<ul>
-<li><p>appsore : </p>
-<p><a href="https://itunes.apple.com/cn/app/xue-qiu-kuai-pao/id906007297?l=en&mt=8">https://itunes.apple.com/cn/app/xue-qiu-kuai-pao/id906007297?l=en&amp;mt=8</a></p>
-</li>
-</ul>
-<p>android传送门: </p>
-<ul>
-<li><p>小米商城 : </p>
-<p><a href="http://app.mi.com/detail/70714">http://app.mi.com/detail/70714</a> </p>
-</li>
-<li><p>豌豆荚 : </p>
-<p><a href="http://www.wandoujia.com/apps/klnd.flip_gravity">http://www.wandoujia.com/apps/klnd.flip_gravity</a> </p>
-</li>
-<li><p>91助手 : </p>
-<p><a href="http://apk.91.com/Soft/Detail.aspx?Platform=Android&f_id=40848946">http://apk.91.com/Soft/Detail.aspx?Platform=Android&amp;f_id=40848946</a> </p>
-</li>
-<li><p>360手机助手: </p>
-<p><a href="http://zhushou.360.cn/detail/index/soft_id/1939872?recrefer=SE_D_%E9%9B%AA%E7%90%83%E5%BF%AB%E8%B7%91">http://zhushou.360.cn/detail/index/soft_id/1939872?recrefer=SE_D_%E9%9B%AA%E7%90%83%E5%BF%AB%E8%B7%91</a></p>
-</li>
-<li><p>应用宝 : </p>
-<p><a href="http://android.myapp.com/myapp/detail.htm?apkName=klnd.flip_gravity">http://android.myapp.com/myapp/detail.htm?apkName=klnd.flip_gravity</a></p>
-</li>
-</ul>
 
       
     </div>
