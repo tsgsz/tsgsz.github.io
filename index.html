@@ -234,36 +234,22 @@
 <p>以前和 AI 协作是”边说边做”，现在是”先想明白再动手”。</p>
 </blockquote>
 <h2 id="一次典型的”翻车”"><a href="#一次典型的”翻车”" class="headerlink" title="一次典型的”翻车”"></a>一次典型的”翻车”</h2><p>上周我说：”worker，给咱们图片生成的工具加个视频功能。”</p>
-<p>一小时后，他交了作业：脚本写了，API 调通了。但我一看——</p>
-<ul>
-<li>视频模型的参数没配全</li>
-<li>任务轮询的逻辑漏了</li>
-<li>下载功能也没做</li>
-</ul>
+<p>一小时后，他交了作业：脚本写了，API 调通了。但我一看——视频模型的参数没配全、轮询逻辑漏了、下载功能也没做。</p>
 <p>只能打回去重做。</p>
-<p>这种”边想边做”的模式，对 AI 来说简直就是灾难：</p>
-<ul>
-<li><strong>不知道边界</strong>：做到什么程度算”完成”？</li>
-<li><strong>容易遗漏</strong>：想一步做一步，想到哪做到哪</li>
-<li><strong>难验收</strong>：做完了才发现和预期不符</li>
-</ul>
-<p>问题出在哪？</p>
-<p><strong>AI 的”记忆力”太差了。</strong></p>
-<h2 id="AI-的记忆力问题"><a href="#AI-的记忆力问题" class="headerlink" title="AI 的记忆力问题"></a>AI 的记忆力问题</h2><p>Manus 的联合创始人 Peak Ji 打了个精妙的比方：</p>
+<p>这种”边想边做”的模式，对 AI 来说简直是灾难：不知道边界在哪、容易遗漏、做完了才发现和预期不符。</p>
+<p><strong>问题本质：AI 的”记忆力”太差了。</strong></p>
+<h2 id="为什么-AI-总是”忘事”？"><a href="#为什么-AI-总是”忘事”？" class="headerlink" title="为什么 AI 总是”忘事”？"></a>为什么 AI 总是”忘事”？</h2><p>Manus 的联合创始人 Peak Ji 打了个精妙的比方：</p>
 <blockquote>
 <p>如果说大语言模型是 CPU，那么上下文窗口就是 RAM——它是模型的工作内存。</p>
 </blockquote>
 <p>你的 AI 再聪明，”内存”管理不好，一样会卡死、变慢、变笨。</p>
-<p><strong>三个具体的坑：</strong></p>
-<p><strong>1. 信息超载</strong></p>
-<p>大模型虽然有 128K 甚至 200K 的上下文窗口，但一次复杂任务产生的信息（网页、PDF、代码、多轮对话）很容易把它撑爆。就像你同时开 50 个 Chrome 标签页，电脑开始卡顿。</p>
-<p><strong>2. Lost in the Middle</strong></p>
-<p>模型对长上下文的注意力是不均匀的，中间的信息最容易被遗忘。好比你读一篇长文章，开头和结尾记得清楚，中间的内容就模糊了。</p>
-<p><strong>3. 成本飙升</strong></p>
-<p>大模型推理时，如果上下文前缀变了，KV-Cache 就会失效。Claude 缓存命中 vs 未命中的成本差 10 倍。哪怕只是加了个时间戳（精确到秒），也可能让整段缓存失效。</p>
-<h2 id="我的解法：先写”剧本”，再开拍"><a href="#我的解法：先写”剧本”，再开拍" class="headerlink" title="我的解法：先写”剧本”，再开拍"></a>我的解法：先写”剧本”，再开拍</h2><p>既然 AI 的”内存”有限，那就得帮它<strong>外接硬盘</strong>。</p>
-<p>我的做法很简单：<strong>动手之前，先把”做什么、怎么做、怎么验收”写清楚。</strong></p>
-<p>这个文档我叫它 Spec（规范），包含 9 个部分：</p>
+<p>具体表现在三个层面：</p>
+<p><strong>1. 信息超载</strong> - 128K 上下文看似够用，但一次复杂任务产生的信息（网页、PDF、代码、多轮对话）很容易撑爆它。</p>
+<p><strong>2. Lost in the Middle</strong> - 模型对长上下文的注意力不均匀，中间信息最容易被遗忘。</p>
+<p><strong>3. 成本飙升</strong> - 上下文前缀一变，KV-Cache 就失效，Claude 缓存命中 vs 未命中的成本差 10 倍。</p>
+<p>Manus 的解法是<strong>Context Engineering</strong>（上下文工程）：不把一切塞给模型”记住”，而是外接”硬盘”——让 AI 学会读写文件，按需加载。</p>
+<h2 id="我的解法：剧本-团队-分工"><a href="#我的解法：剧本-团队-分工" class="headerlink" title="我的解法：剧本 + 团队 + 分工"></a>我的解法：剧本 + 团队 + 分工</h2><p>我摸索出的方法可以总结为三点：</p>
+<h3 id="1-先写”剧本”（Spec）"><a href="#1-先写”剧本”（Spec）" class="headerlink" title="1. 先写”剧本”（Spec）"></a>1. 先写”剧本”（Spec）</h3><p>动手之前，先把”做什么、怎么做、怎么验收”写清楚。这个文档我叫它 Spec，包含：</p>
 <table>
 <thead>
 <tr>
@@ -276,24 +262,12 @@
 <td>为什么要做这件事？</td>
 </tr>
 <tr>
-<td><strong>目标</strong></td>
-<td>要达成什么具体结果？</td>
+<td><strong>目标&#x2F;非目标</strong></td>
+<td>要做什么、明确不做哪些</td>
 </tr>
 <tr>
-<td><strong>非目标</strong></td>
-<td>明确哪些不做，防范围蔓延</td>
-</tr>
-<tr>
-<td><strong>功能规格</strong></td>
-<td>功能点清单</td>
-</tr>
-<tr>
-<td><strong>技术规格</strong></td>
-<td>用什么技术方案</td>
-</tr>
-<tr>
-<td><strong>接口定义</strong></td>
-<td>输入输出、数据结构</td>
+<td><strong>功能&#x2F;技术规格</strong></td>
+<td>具体功能点、技术方案</td>
 </tr>
 <tr>
 <td><strong>验收标准</strong></td>
@@ -303,14 +277,9 @@
 <td><strong>任务拆解</strong></td>
 <td>拆成可执行的子任务</td>
 </tr>
-<tr>
-<td><strong>依赖项</strong></td>
-<td>需要什么前置条件？</td>
-</tr>
 </tbody></table>
-<p>Spec 不只是个文档，它其实是 AI 的<strong>外部记忆</strong>——把任务要求、验收标准从模型的”内存”里卸载到文件系统，让 AI 可以随时读取，而不是靠它”记住”。</p>
-<h2 id="给-AI-配个”团队”"><a href="#给-AI-配个”团队”" class="headerlink" title="给 AI 配个”团队”"></a>给 AI 配个”团队”</h2><p>Specs 解决了”记什么”的问题，但还有”谁来干”的问题。</p>
-<p>我不只有一个 AI 助手，我有一整个<strong>AI 团队</strong>：</p>
+<p>Spec 是 AI 的<strong>外部记忆</strong>——把任务要求从模型的”内存”卸载到文件系统，随时读取，不用靠它”记住”。</p>
+<h3 id="2-给-AI-配个”团队”"><a href="#2-给-AI-配个”团队”" class="headerlink" title="2. 给 AI 配个”团队”"></a>2. 给 AI 配个”团队”</h3><p>我不只有一个 AI 助手，我有一整个团队，每个成员有自己的”工作记忆”（workspace）：</p>
 <table>
 <thead>
 <tr>
@@ -327,7 +296,7 @@
 <tr>
 <td><strong>lead</strong></td>
 <td>技术领队</td>
-<td>拆需求、派任务</td>
+<td>拆需求、写代码</td>
 </tr>
 <tr>
 <td><strong>fin</strong></td>
@@ -345,70 +314,51 @@
 <td>运维部署</td>
 </tr>
 </tbody></table>
-<p>每个成员有独立的”工作记忆”（workspace），互不干扰。就像公司的不同部门，财务部不知道技术部的内部讨论，这样上下文就不会混在一起。</p>
-<h2 id="谁来写-Spec？"><a href="#谁来写-Spec？" class="headerlink" title="谁来写 Spec？"></a>谁来写 Spec？</h2><p>这里有个关键点：<strong>不是所有 AI 都自己写 Spec</strong>。</p>
-<p>我根据任务类型，把团队分成三类：</p>
+<p>就像公司的不同部门，互相独立，上下文不会混在一起。</p>
+<h3 id="3-明确”谁来写剧本”"><a href="#3-明确”谁来写剧本”" class="headerlink" title="3. 明确”谁来写剧本”"></a>3. 明确”谁来写剧本”</h3><p>关键：<strong>不是所有 AI 都自己写 Spec</strong>。</p>
+<p>我按任务类型把团队分成三类：</p>
 <p><strong>执行型</strong>（worker、ops）</p>
 <ul>
 <li><strong>我出 Spec</strong>，他们按图施工</li>
-<li>任务是”按图施工”，有明确的技术路径</li>
-<li>关键是：不脑补、不加戏、遇模糊反问</li>
+<li>任务是”按图施工”，有明确路径</li>
+<li>关键：不脑补、不加戏、遇模糊反问</li>
 </ul>
 <p><strong>分析&#x2F;创意型</strong>（fin、director、b2b-pm）</p>
 <ul>
 <li><strong>自己出 Spec</strong>，我来确认方向</li>
 <li>任务是”探索性”的，需要专业判断</li>
-<li>例：让 fin 分析股票，他会自己定”看什么指标、用什么模型、输出什么结论”</li>
+<li>例：让 fin 分析股票，他自己定”看什么指标、用什么模型”</li>
 </ul>
 <p><strong>混合型</strong>（lead、crypto）</p>
 <ul>
 <li><strong>分阶段</strong>：设计阶段自己出，执行阶段我来出</li>
-<li>既有分析又有实现</li>
 </ul>
-<p><strong>快速判断口诀：</strong></p>
-<ul>
-<li>**”干”**（执行）→ 我出 Spec</li>
-<li>**”想”**（分析&#x2F;创意）→ AI 自己出 Spec</li>
-<li>**”先想后干”**（混合）→ 分阶段，各出各的</li>
-</ul>
-<h2 id="实际怎么运转？"><a href="#实际怎么运转？" class="headerlink" title="实际怎么运转？"></a>实际怎么运转？</h2><p>现在的 workflow 是这样的：</p>
+<p><strong>判断口诀：</strong>“干”→我出，”想”→AI出，”先想后干”→分阶段。</p>
+<h2 id="实际怎么运转？"><a href="#实际怎么运转？" class="headerlink" title="实际怎么运转？"></a>实际怎么运转？</h2><p>Workflow 很简单：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">我提需求 → Main 评估 → 需要规范？→ 创建 Spec </span><br><span class="line">→ 确认验收标准 → 派 AI 执行 → 按标准自检 → 汇报结果</span><br></pre></td></tr></table></figure>
 
-<p><strong>以前</strong>那个翻车的例子，现在变成了：</p>
+<p>以前那个翻车的例子，现在变成了：</p>
 <blockquote>
 <p>我：”worker，给图片生成工具加个视频功能”</p>
 <p>Main：”这个任务涉及多个 API 端点，需要写规范”</p>
 <p>创建 <code>SPEC-video-gen-20260210-v1.md</code>：</p>
 <ul>
-<li>需求背景：新增视频生成功能</li>
 <li>目标：支持 Veo 3、Kling 等模型</li>
-<li>验收标准：<ul>
-<li><input disabled="" type="checkbox"> 支持 Text-to-Video</li>
-<li><input disabled="" type="checkbox"> 支持 Image-to-Video  </li>
-<li><input disabled="" type="checkbox"> 自动轮询任务状态</li>
-<li><input disabled="" type="checkbox"> 下载生成的视频文件</li>
-</ul>
-</li>
+<li>验收标准：支持 Text-to-Video、Image-to-Video、自动轮询、下载文件</li>
 <li>任务拆解：研究 API → 写脚本 → 测试 → 更新文档</li>
 </ul>
-<p>worker：按规范一条条实现，做完自检验收标准</p>
+<p>worker：按规范一条条实现，做完自检</p>
 </blockquote>
-<p>结果是：<strong>一次到位，不用返工</strong>。</p>
-<h2 id="效果怎么样？"><a href="#效果怎么样？" class="headerlink" title="效果怎么样？"></a>效果怎么样？</h2><p>运行几周，变化很明显：</p>
+<p>结果：<strong>一次到位，不用返工</strong>。</p>
+<h2 id="效果怎么样？"><a href="#效果怎么样？" class="headerlink" title="效果怎么样？"></a>效果怎么样？</h2><p>运行几周，四个明显变化：</p>
 <ol>
-<li><strong>返工少了</strong>：验收标准 upfront，做完就知道对不对</li>
-<li><strong>交接顺了</strong>：一个 AI 的任务，另一个 AI 能接起来继续</li>
-<li><strong>上下文可控了</strong>：复杂任务被拆成小块，每块有清晰的 Spec，不会”内存溢出”</li>
-<li><strong>心明眼亮</strong>：作为”甲方”，我能清楚看到进度和预期</li>
+<li><strong>返工少了</strong> - 验收标准 upfront，做完就知道对不对</li>
+<li><strong>交接顺了</strong> - 一个 AI 的任务，另一个能接起来继续</li>
+<li><strong>上下文可控</strong> - 复杂任务拆成小块，不会”内存溢出”</li>
+<li><strong>心明眼亮</strong> - 作为”甲方”，能清楚看到进度和预期</li>
 </ol>
-<p>代价是前置思考时间变长了。但比起做完发现不对再重来，这点时间花得值。</p>
-<h2 id="和-Manus-不谋而合"><a href="#和-Manus-不谋而合" class="headerlink" title="和 Manus 不谋而合"></a>和 Manus 不谋而合</h2><p>后来看 Manus 的文章，发现他们的做法和我的思路高度重合：</p>
-<p><strong>把文件系统当外部内存</strong>——不让 AI 记住所有事，而是让它学会读写文件。</p>
-<p><strong>不断复述目标</strong>——用 todo.md 把未完成的清单”复述”到上下文末尾，保持目标在”近期注意力范围”。</p>
-<p><strong>保持 prompt 前缀稳定</strong>——只追加不修改，避免 KV-Cache 失效。</p>
-<p>Manus 说他们在押注 “Context Engineering” 而非端到端训练。我也是类似的思路：<strong>不换模型，不换架构，通过工程化地管理上下文，让整个团队提效。</strong></p>
-<h2 id="核心思想"><a href="#核心思想" class="headerlink" title="核心思想"></a>核心思想</h2><p>这套方法的核心就一句话：</p>
-<blockquote>
+<p>代价是前置思考时间变长。但比起做完发现不对再重来，这点时间花得值。</p>
+<h2 id="一句话总结"><a href="#一句话总结" class="headerlink" title="一句话总结"></a>一句话总结</h2><blockquote>
 <p><strong>AI 是”字面意思”的执行者，你得先把字面意思写清楚。同时，要像管理内存一样管理它的上下文。</strong></p>
 </blockquote>
 <p>如果你的 AI 也经常”做着做着就歪了”，不妨试试这套方法。</p>
